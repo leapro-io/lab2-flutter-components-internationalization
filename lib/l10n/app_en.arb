@@ -1,0 +1,11 @@
+{
+  "financeRequests": "Finance Requests",
+  "arabic": "Arabic",
+  "english": "English",
+  "created" : "Created",
+  "sar" : "SAR",
+  "financeRequest": "Finance Request",
+  "accepted" : "Finance Offer Accepted",
+  "pending": "No Finance Offers Received Yet",
+  "offers": "Finance Offers"
+}
