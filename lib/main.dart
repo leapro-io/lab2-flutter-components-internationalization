@@ -1,7 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+
+
+import 'globals.dart';
 
 
 void main() {
@@ -13,11 +15,15 @@ class DynamicCardApp extends StatefulWidget {
   _DynamicCardAppState createState() => _DynamicCardAppState();
 }
 class _DynamicCardAppState extends State<DynamicCardApp> {
-  Locale _currentLocale = Locale('en'); // Initial locale
 
   void _changeLocale(Locale newLocale) {
     setState(() {
-      _currentLocale = newLocale;
+      currentLocale = newLocale;
+      if (currentLocale ==  Locale('ar')) {
+        widgetDirection = TextDirection.rtl;
+      } else {
+        widgetDirection = TextDirection.ltr;
+      }
     });
   }
   @override
@@ -27,20 +33,13 @@ class _DynamicCardAppState extends State<DynamicCardApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      localizationsDelegates: [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      locale: _currentLocale,
-      supportedLocales:[
-        Locale('en'),
-        Locale('ar')
-      ],
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: currentLocale,
+
       home:DynamicCardPageSet(
         changeLocale: _changeLocale, // Pass the function to change the locale
-        currentLocale: _currentLocale, // Pass the current locale
+        // currentLocale: currentLocale, // Pass the current locale
       ),
     );
 
@@ -49,9 +48,9 @@ class _DynamicCardAppState extends State<DynamicCardApp> {
 
 class DynamicCardPageSet extends StatefulWidget {
   final void Function(Locale) changeLocale;
-  final Locale currentLocale;
+  // final Locale currentLocale;
 
-  DynamicCardPageSet({required this.changeLocale, required this.currentLocale});
+  DynamicCardPageSet({required this.changeLocale});
 
   @override
   DynamicCardPageState createState() => DynamicCardPageState();
@@ -64,21 +63,9 @@ class DynamicCardPageState extends State<DynamicCardPageSet> {
   final List<List<String>> cardIcons =[['0','1'], ['0'],[], ['0','1']];
   final List<String> cardStatus = ['2', 'accepted', 'pending', '2'];
   String selectedLanguage = 'English';
-  Locale _currentLocale =  Locale('en'); // Initial locale
-  TextDirection _widgetDirection = TextDirection.ltr; // Default direction
+  TextDirection _widgetDirection = widgetDirection; // Default direction
 
 
-  void _changeLocale(Locale newLocale) {
-    setState(() {
-      _currentLocale = newLocale;
-      locale : newLocale;
-      if (_currentLocale ==  Locale('ar')) {
-        _widgetDirection = TextDirection.rtl;
-      } else {
-        _widgetDirection = TextDirection.ltr;
-      }
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,94 +75,94 @@ class DynamicCardPageState extends State<DynamicCardPageSet> {
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-            Container(
-            padding: const EdgeInsets.symmetric(vertical: 32.0),
-            alignment: Alignment.topCenter,
-            // log((AppLocalizations.of(context)!.financeRequests).toString()),
-            child: Text(
-              AppLocalizations.of(context)!.financeRequests,
-              style: const TextStyle(
-                fontSize: 24.0,
-                fontWeight: FontWeight.bold,
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 32.0),
+                alignment: Alignment.topCenter,
+                // log((AppLocalizations.of(context)!.financeRequests).toString()),
+                child: Text(
+                  AppLocalizations.of(context)!.financeRequests,
+                  style: const TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: cardTitles.length,
-              itemBuilder: (context, index) {
-                return CardWidget(title: cardTitles[index], subtitle: cardSubtitles[index], date:cardDate[index], icons:cardIcons[index], status:cardStatus[index]);
-              },
-            ),
-          ),
-
-
-      Container(
-        padding: const EdgeInsets.all(4.0),
-
-        child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            width: 104,
-        height: 40,
-        decoration: BoxDecoration(
-
-            border: Border.all(color: const Color(0XFF000000)),
-            borderRadius: BorderRadius.circular(6.0),
-
-        ),
-          child: DropdownButton<Locale>(
-            padding: EdgeInsets.only(left: 2.0,right :2.0),
-
-            value: widget.currentLocale,
-            focusColor: Colors.white,
-            elevation: 8,
-            iconSize: 60,
-            items: [
-              DropdownMenuItem(
-                value: Locale('en'),
-                child: Text(AppLocalizations.of(context)!.english),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: cardTitles.length,
+                  itemBuilder: (context, index) {
+                    return CardWidget(title: cardTitles[index], subtitle: cardSubtitles[index], date:cardDate[index], icons:cardIcons[index], status:cardStatus[index]);
+                  },
+                ),
               ),
-              DropdownMenuItem(
-                value:  Locale('ar'),
-                child: Text(AppLocalizations.of(context)!.arabic),
+
+
+              Container(
+                padding: const EdgeInsets.all(4.0),
+
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      width: 104,
+                      height: 40,
+                      decoration: BoxDecoration(
+
+                        border: Border.all(color: const Color(0XFF000000)),
+                        borderRadius: BorderRadius.circular(6.0),
+
+                      ),
+                      child: DropdownButton<Locale>(
+                        padding: EdgeInsets.only(left: 2.0,right :2.0),
+
+                        value: currentLocale,
+                        focusColor: Colors.white,
+                        elevation: 8,
+                        iconSize: 60,
+                        items: [
+                          DropdownMenuItem(
+                            value: Locale('en'),
+                            child: Text(AppLocalizations.of(context)!.english),
+                          ),
+                          DropdownMenuItem(
+                            value:  Locale('ar'),
+                            child: Text(AppLocalizations.of(context)!.arabic),
+                          ),
+                        ],
+                        onChanged: (newLocale) {
+                          widget.changeLocale(newLocale!);
+
+                        },
+                        icon: Container(
+
+                          decoration: BoxDecoration(
+
+                            color: Colors.grey[200],
+                            border: const Border(
+                              left: BorderSide(color: Color(0XFFEEEEEE)), // Change the color as needed
+                              top: BorderSide(color: Color(0XFFEEEEEE)),
+                              right: BorderSide(color: Color(0XFFEEEEEE)),
+                              bottom: BorderSide(color: Color(0XFFEEEEEE)),
+                            ),
+                          ),
+                          child: Icon(
+
+                            Icons.arrow_drop_down,
+                            size: 30,
+                            color: Colors.black, // Change the arrow color as needed
+                          ),
+                        ),
+                        isDense: true,
+                        isExpanded: false,
+                        underline: Container(), // Remove the underline
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
-            onChanged: (newLocale) {
-              widget.changeLocale(newLocale!);
-              _changeLocale(newLocale);
-            },
-          icon: Container(
-
-            decoration: BoxDecoration(
-
-              color: Colors.grey[200],
-              border: const Border(
-                left: BorderSide(color: Color(0XFFEEEEEE)), // Change the color as needed
-                top: BorderSide(color: Color(0XFFEEEEEE)),
-                right: BorderSide(color: Color(0XFFEEEEEE)),
-                bottom: BorderSide(color: Color(0XFFEEEEEE)),
-              ),
-            ),
-            child: Icon(
-
-              Icons.arrow_drop_down,
-              size: 30,
-              color: Colors.black, // Change the arrow color as needed
-            ),
           ),
-          isDense: true,
-          isExpanded: false,
-          underline: Container(), // Remove the underline
-    ),
-          ),
-    ],
-        ),
-      ),
-    ],
-      ),
-    )
+        )
 
     );
 
@@ -220,44 +207,44 @@ class CardWidget extends StatelessWidget {
             ),
           ),
           Card(
-          surfaceTintColor: Colors.grey[400],
+            surfaceTintColor: Colors.grey[400],
 
-          margin: EdgeInsets.all(16.0),
+            margin: EdgeInsets.all(16.0),
             child: Column(
-            mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.min,
 
-            children: <Widget>[
-              ListTile(
-                trailing: Text(finalStatus,
-                style: TextStyle(
-                  fontSize: 12.0,
-                  color: Colors.black,
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-                leading: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    for (String icon in icons)
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 4.0),
-                        child: Image.asset(
-                          '$icon.png',
-                          width: 30.0,
-                          height: 30.0,
-                        ),
+                children: <Widget>[
+                  ListTile(
+                    trailing: Text(finalStatus,
+                      style: TextStyle(
+                        fontSize: 12.0,
+                        color: Colors.black,
+                        fontWeight: FontWeight.normal,
                       ),
-                  ],
+                    ),
+                    leading: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        for (String icon in icons)
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 4.0),
+                            child: Image.asset(
+                              '$icon.png',
+                              width: 30.0,
+                              height: 30.0,
+                            ),
+                          ),
+                      ],
 
-                ),
+                    ),
+
+                  ),
+                ]
 
             ),
-           ]
-
           ),
+        ],
       ),
-      ],
-    ),
     );
   }
 }
